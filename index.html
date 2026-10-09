@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#8b1a1a">
+<title>客户决断日历 · 2026年10月</title>
+<style>
+:root{
+  --paper:#f7f2e7; --card:#fffdf7; --line:#e0d0ab; --ink:#2b2b2b; --dim:#6f6552;
+  --red:#8b1a1a; --gold:#b8860b; --ok:#1f6f43; --warn:#a8500a;
+  --sS:#1f6f43; --sA:#b8860b; --sB:#9a8f7a;
+}
+*{box-sizing:border-box;-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);line-height:1.65;font-size:16px;
+  font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Songti SC","Noto Serif SC",serif}
+.wrap{max-width:640px;margin:0 auto;padding:0 12px 90px}
+header{background:linear-gradient(160deg,#8b1a1a,#6d1414);color:#fdf6e6;
+  padding:20px 16px 16px;margin:0 -12px 14px;border-radius:0 0 14px 14px}
+header h1{margin:0;font-size:22px;letter-spacing:2px}
+header .sub{font-size:13px;opacity:.92;margin-top:5px;letter-spacing:.5px}
+.badges{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.badge{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.28);
+  border-radius:999px;padding:2px 10px;font-size:12px}
+.badge.hot{background:#f6c86a;color:#5a3a06;border-color:#f6c86a;font-weight:700}
+section{background:var(--card);border:1px solid var(--line);border-radius:12px;
+  padding:14px;margin:12px 0;box-shadow:0 1px 3px rgba(120,90,40,.06)}
+h2{font-size:16px;margin:0 0 10px;color:var(--red);letter-spacing:1px;
+  display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+h2 .n{background:var(--red);color:#fff;width:20px;height:20px;border-radius:6px;
+  font-size:12px;display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto}
+h2 .tip{font-size:12px;color:var(--dim);font-weight:400;letter-spacing:0}
+.mid{font-size:13.5px;color:#413a2c}
+.mid b{color:var(--red)}
+.stat{display:flex;gap:8px;margin:10px 0 4px}
+.stat div{flex:1;text-align:center;border:1px solid var(--line);border-radius:10px;
+  padding:8px 4px;background:#fffefa}
+.stat .v{font-size:22px;font-weight:800;line-height:1.2}
+.stat .k{font-size:11.5px;color:var(--dim)}
+.stat .cS .v{color:var(--sS)} .stat .cA .v{color:var(--sA)} .stat .cB .v{color:var(--sB)}
+.legend{display:flex;gap:12px;flex-wrap:wrap;font-size:12px;color:var(--dim);margin:2px 0 10px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:4px}
+.calhead,.grid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
+.calhead div{text-align:center;font-size:11.5px;color:var(--dim);padding:2px 0;font-weight:600}
+.cell{position:relative;border:1px solid var(--line);border-radius:9px;background:#fffefa;
+  padding:5px 3px 4px;text-align:center;cursor:pointer;min-height:62px;
+  display:flex;flex-direction:column;align-items:center;justify-content:flex-start;
+  transition:transform .08s,box-shadow .12s;font-family:inherit;color:inherit}
+.cell:hover{box-shadow:0 3px 10px rgba(120,90,40,.18);transform:translateY(-1px)}
+.cell:active{transform:scale(.96)}
+.cell:focus-visible{outline:2px solid var(--red);outline-offset:2px}
+.cell.blank{border:none;background:transparent;cursor:default;min-height:62px}
+.cell.blank:hover{box-shadow:none;transform:none}
+.cell .dn{font-size:16px;font-weight:800;line-height:1.1}
+.cell .dgz{font-size:10.5px;color:var(--dim);letter-spacing:.5px}
+.cell .djc{font-size:9.5px;color:#a4977c}
+.cell .dtag{font-size:10.5px;font-weight:700;margin-top:1px;border-radius:4px;
+  padding:0 3px;line-height:1.45}
+.cell.tS{background:#f0f8f2;border-color:#bfe0cb}
+.cell.tS .dtag{background:#e2f1e7;color:var(--sS)}
+.cell.tA{background:#fdf7ea;border-color:#f0dcb4}
+.cell.tA .dtag{background:#faf0da;color:var(--warn)}
+.cell.tB{background:#faf8f3;border-color:#e8e2d3}
+.cell.tB .dtag{background:#f1eee6;color:#8d8371}
+.cell.tB .dn{color:#8d8371}
+.cell.today{outline:2px solid var(--red);outline-offset:1px}
+.cell.today .dn::after{content:"今";font-size:9px;color:#fff;background:var(--red);
+  border-radius:3px;padding:0 2px;margin-left:2px;vertical-align:2px}
+.hint{font-size:12.5px;color:var(--red);text-align:center;margin-top:10px;font-weight:600}
+.win{border:1px solid var(--line);border-radius:10px;padding:9px 11px;margin:8px 0;background:#fffefa}
+.win .t{font-size:14px;font-weight:800;color:var(--red);letter-spacing:.5px}
+.win .b{font-size:13px;color:#413a2c;margin-top:3px}
+.win .d{font-size:12.5px;color:var(--dim);margin-top:4px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{border-bottom:1px solid var(--line);padding:6px 4px;text-align:left;vertical-align:top}
+th{color:var(--dim);font-weight:600;font-size:12px}
+tr.hi td{background:#f0f8f2}
+.redline{font-size:13.5px;margin:7px 0;padding-left:10px;border-left:3px solid var(--red)}
+footer{font-size:11.5px;color:var(--dim);text-align:center;margin-top:18px;line-height:1.7}
+/* 弹层 */
+.modal{position:fixed;inset:0;background:rgba(43,35,25,.5);display:none;
+  align-items:flex-end;justify-content:center;z-index:50}
+.modal.show{display:flex}
+.sheet{background:var(--card);width:100%;max-width:640px;max-height:88vh;overflow-y:auto;
+  border-radius:16px 16px 0 0;padding:16px 16px 26px;position:relative;
+  animation:up .18s ease-out}
+@keyframes up{from{transform:translateY(22px);opacity:.6}to{transform:none;opacity:1}}
+.sheet .x{position:absolute;right:10px;top:8px;border:none;background:transparent;
+  font-size:26px;line-height:1;color:var(--dim);cursor:pointer;padding:4px 8px;font-family:inherit}
+.sheet h3{margin:0 0 2px;font-size:20px;letter-spacing:1px}
+.sheet .gzline{font-size:13px;color:var(--dim);margin-bottom:8px}
+.tierbar{border-radius:9px;padding:9px 11px;font-size:14px;font-weight:700;margin:8px 0 12px}
+.tierbar.tS{background:#eaf6ee;color:var(--ok);border:1px solid #bfe0cb}
+.tierbar.tA{background:#fdf3e3;color:var(--warn);border:1px solid #f0d6ac}
+.tierbar.tB{background:#f6f2ea;color:#7d7361;border:1px solid #e2dac9}
+.kv{display:grid;grid-template-columns:76px 1fr;gap:4px 8px;font-size:13px;margin-bottom:10px}
+.kv .k{color:var(--dim)}
+.sec{margin:12px 0 0}
+.sec .h{font-size:13.5px;font-weight:800;color:var(--red);margin-bottom:5px;letter-spacing:.5px}
+.sec ul{margin:0;padding-left:19px;font-size:13.5px;color:#413a2c}
+.sec ul li{margin:4px 0}
+.sec.ji .h{color:var(--red)}
+.sec.ji ul{color:#6b3a34}
+.talk{background:#fdf3e3;border-left:3px solid var(--gold);padding:8px 10px;
+  border-radius:0 8px 8px 0;font-size:13.5px;color:#413a2c;margin-top:6px}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
+.chip{background:#f1ece0;border-radius:999px;padding:2px 9px;font-size:12px;color:#5c5340}
+@media print{
+  body{background:#fff;font-size:12px}
+  .wrap{max-width:100%;padding:0}
+  header{background:#8b1a1a!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  section{break-inside:avoid;box-shadow:none}
+  .modal,.fab{display:none!important}
+  .cell{min-height:52px}
+  @page{margin:10mm}
+}
+.fab{position:fixed;right:14px;bottom:14px;background:var(--red);color:#fff;border:none;
+  border-radius:999px;padding:11px 16px;font-size:13.5px;font-weight:700;cursor:pointer;
+  box-shadow:0 4px 14px rgba(139,26,26,.32);font-family:inherit}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1>客户决断日历</h1>
+  <div class="sub">2026年10月 · 全月跨 火·金 / 土·土 两段 · 个人销售节奏模型排定</div>
+  <div class="badges">
+    <span class="badge hot">土日 · 金日 = 主场</span><span class="badge">火日须搭配土</span><span class="badge">水日 · 木日宜守</span><span class="badge">点方块看建议</span>
+  </div>
+</header>
+
+<section>
+  <h2><span class="n">1</span>本月定调<span class="tip">先看大势，再看日子</span></h2>
+  <div class="mid">
+    10月1–7日以<b>火·金</b>为主（火克金，压力落在自己身上——别单打独斗）；10月8日起转为<b>土·土</b>主导（土气最厚的月份，最适合走流程、拿背书、盖章落定）。<br>换句话说：<b>本月的力气要花在“走流程、拿背书、盖到章”上，而不是花在“多跑几家、多谈几轮”上。</b>本月有 6 天决断日，分别是2、3、11、12、13、24日。最忌硬拼：顺节奏的日子给你托底，逆节奏的日子只会消耗你。
+  </div>
+  <div class="stat">
+    <div class="cS"><div class="v">6</div><div class="k">决断日 ★★★</div></div>
+    <div class="cA"><div class="v">5</div><div class="k">推进日 ★★</div></div>
+    <div class="cB"><div class="v">20</div><div class="k">守日 ★</div></div>
+  </div>
+  <div class="mid" id="rangeLine" style="margin-top:8px;color:var(--dim);font-size:12.5px"></div>
+</section>
+
+<section>
+  <h2><span class="n">2</span>本月日历总揽<span class="tip">点方块看当日建议</span></h2>
+  <div class="legend">
+    <span><i style="background:#1f6f43"></i>★★★ 决断日：可逼单、可签约</span>
+    <span><i style="background:#b8860b"></i>★★ 推进日：只铺垫，不逼单</span>
+    <span><i style="background:#9a8f7a"></i>★ 守日：做内务，别谈单</span>
+  </div>
+  <div class="calhead"><div>日</div><div>一</div><div>二</div><div>三</div><div>四</div><div>五</div><div>六</div></div>
+  <div class="grid" id="grid"></div>
+  <div class="hint">👆 点击任意方块，查看当天的宜忌、最佳时段和话术</div>
+</section>
+
+<section>
+  <h2><span class="n">3</span>本月黄金窗口<span class="tip">单子押在这里</span></h2>
+  <div id="keyWins"></div>
+</section>
+
+<section>
+  <h2><span class="n">4</span>决断日 / 推进日速查<span class="tip">打印带走</span></h2>
+  <table>
+    <thead><tr><th>日期</th><th>主题</th><th>日型</th><th>等级</th><th>打法</th></tr></thead>
+    <tbody><tr class=''><td>1日 周四</td><td>背书/同伴</td><td>收尾日</td><td>★★ 推进日</td><td>流程</td></tr><tr class='hi'><td>2日 周五</td><td>背书/同伴</td><td>立事日</td><td>★★★ 决断日</td><td>签约</td></tr><tr class='hi'><td>3日 周六</td><td>同伴/背书</td><td>清旧日</td><td>★★★ 决断日</td><td>攻坚</td></tr><tr class='hi'><td>11日 周日</td><td>背书/名分</td><td>成事日</td><td>★★★ 决断日</td><td>签约</td></tr><tr class='hi'><td>12日 周一</td><td>背书/背书</td><td>收口日</td><td>★★★ 决断日</td><td>签约</td></tr><tr class='hi'><td>13日 周二</td><td>同伴/同伴</td><td>开局日</td><td>★★★ 决断日</td><td>攻坚</td></tr><tr class=''><td>14日 周三</td><td>同伴/同伴</td><td>收尾日</td><td>★★ 推进日</td><td>组队</td></tr><tr class=''><td>22日 周四</td><td>背书/名分</td><td>谨慎日</td><td>★★ 推进日</td><td>流程</td></tr><tr class=''><td>23日 周五</td><td>同伴/名分</td><td>成事日</td><td>★★ 推进日</td><td>组队</td></tr><tr class='hi'><td>24日 周六</td><td>同伴/背书</td><td>收口日</td><td>★★★ 决断日</td><td>攻坚</td></tr><tr class=''><td>30日 周五</td><td>名分/背书</td><td>平常日</td><td>★★ 推进日</td><td>见人</td></tr></tbody>
+  </table>
+</section>
+
+<section>
+  <h2><span class="n">5</span>这套日子是怎么算出来的<span class="tip">可复核</span></h2>
+  <div class="mid">
+    以<b>日期的属性</b>为骨架：一天里"土、金"成分重则加分，"水、木"成分重则减分，火要落在土上才算数。再看三样东西修正：
+  </div>
+  <div class="redline"><b>主题定谈法</b>——平台日谈背书、同伴日谈组队、名分日谈 title、表达日谈方案、目标日只谈钱不逼单。</div><div class="redline"><b>助力定人手</b>——贵人日开口求人最灵；主场日你本人出面最有力；攻坚日适合啃硬骨头。</div><div class="redline"><b>日型定火候</b>——成事日、开局日、收口日宜定板收款；<b>冲煞日、收尾日一律不做决断</b>，哪怕日子再漂亮也只降不升。</div>
+  <div class="mid" style="margin-top:8px;color:var(--dim);font-size:12.5px">
+    本月有两个"看着好、其实不能谈"的坑：冲煞日（9日、21日）——与戌相冲，哪怕日子再漂亮也压到守日，当天不签字、不承诺、不打款；收尾日但日子好看（1日、14日）——封顶只到推进日，宜收口不宜开新局。
+  </div>
+</section>
+
+<section>
+  <h2><span class="n">6</span>三条红线<span class="tip">比挑日子更重要</span></h2>
+  <div class="redline">不在<b>守日</b>逼单——逆节奏的日子开口要承诺，十有八九把关系谈坏，回头再暖场成本更高。</div><div class="redline">不在<b>冲煞日、收尾日</b>签字收款——这两天只做收口与内务，是纪律，不是讲究。</div><div class="redline">不靠<b>熬夜硬写、连轴应酬</b>换业绩——你靠的是平台和背书，不是体力。</div>
+</section>
+
+<footer>
+  按日期属性 + 主题 + 助力 + 日型推得，为个人销售节奏参考，不作确定性承诺<br>本页不含任何个人信息，可公开访问 · 生成工具：tools/build_decision_calendar.py
+</footer>
+</div>
+
+<div class="modal" id="modal"><div class="sheet">
+  <button class="x" type="button" aria-label="关闭">×</button>
+  <div id="mbody"></div>
+</div></div>
+<button class="fab" id="fab" type="button">打印/存PDF</button>
+<script>
+const CAL = [{"d": 1, "w": "四", "gel": "土", "zel": "金", "ss": "背书", "zss": "同伴", "jc": "收尾", "sslist": ["主场", "出行"], "score": 5.6, "why": "土生金·平台与同伴同旺", "tier": "A", "angle": "平台日 · 借背书", "yi": ["开口先讲平台：资质、案例、头部客户、上市公司主体", "约客户走\"正式流程\"：递方案、报审批、要盖章回执", "向上要资源：找领导站台、要授权价、要技术支持", "收尾日：宜收口、宜复盘，不宜开新局、不宜签字", "主场日：你本人出面最有力，亲自谈、亲自签，别假手他人", "出行日：宜出行、宜跑动，坐办公室反而浪费", "今日冲你本月主线·动中得财，宜主动出击，别拖"], "ji": ["别只谈价格和感情——平台日不谈背书，等于白跑", "不要在今天要签字——火候没到，逼了反而倒退", "收尾日：不开新局、不见新客户，适合内部收口"], "hours": ["辰时 07:00–09:00", "未时 13:00–15:00"], "talk": "「X总，今天不急着定。我把技术方案和两个同行的案例留给您，10月2日（周五）我再来跟您把细节对完。」（要下一步，不要承诺）", "tag": "流程", "cls": "印", "cap": "收尾日·封顶推进日（宜收口、不宜开新局）"}, {"d": 2, "w": "五", "gel": "土", "zel": "金", "ss": "背书", "zss": "同伴", "jc": "立事", "sslist": ["攻坚"], "score": 6.4, "why": "土生金·平台与同伴同旺", "tier": "S", "angle": "平台日 · 借背书", "yi": ["开口先讲平台：资质、案例、头部客户、上市公司主体", "约客户走\"正式流程\"：递方案、报审批、要盖章回执", "向上要资源：找领导站台、要授权价、要技术支持", "立事日：宜立计划、建关系，不宜立刻求结果", "攻坚日：适合啃硬骨头客户，但别把劲儿对着自己人"], "ji": ["别只谈价格和感情——平台日不谈背书，等于白跑"], "hours": ["辰时 07:00–09:00", "未时 13:00–15:00"], "talk": "「X总，方案按您上次的意见改完了。今天把时间点和责任人定下来，我这边就能排产期——您看是10月3日（周六）把流程走了，还是10月11日（周日）？」（二选一，不问“要不要”）", "tag": "签约", "cls": "印", "cap": ""}, {"d": 3, "w": "六", "gel": "金", "zel": "土", "ss": "同伴", "zss": "背书", "jc": "清旧", "sslist": ["独处"], "score": 6.3, "why": "土生金·有背书撑腰，说话有底气", "tier": "S", "angle": "同伴日 · 借圈子", "yi": ["带队友一起见客户：技术+销售双人组，气场翻倍", "找同行/老同事引荐，内推胜过陌生拜访十倍", "把关系当资产盘点：固定节奏联络，不是用时才想起", "清旧日：除旧布新，适合清理旧账、了结旧单再谈新的", "独处日：宜独处打磨方案、写材料，少社交多沉淀"], "ji": ["别单打独斗；也别和朋友谈借贷、合伙不分账"], "hours": ["申时 15:00–17:00", "酉时 17:00–19:00"], "talk": "「X总，方案按您上次的意见改完了。今天把时间点和责任人定下来，我这边就能排产期——您看是10月11日（周日）把流程走了，还是10月12日（周一）？」（二选一，不问“要不要”）", "tag": "攻坚", "cls": "比", "cap": ""}, {"d": 4, "w": "日", "gel": "金", "zel": "水", "ss": "同伴", "zss": "表达", "jc": "守成", "sslist": ["笔头", "出行"], "score": 1.0, "why": "", "tier": "B", "angle": "同伴日 · 借圈子", "yi": ["带队友一起见客户：技术+销售双人组，气场翻倍", "找同行/老同事引荐，内推胜过陌生拜访十倍", "把关系当资产盘点：固定节奏联络，不是用时才想起", "守成日：宜守不宜进，满则溢，别加码", "笔头日：宜写标书、做方案、备材料，笔头胜过口头", "出行日：宜出行、宜跑动，坐办公室反而浪费"], "ji": ["别单打独斗；也别和朋友谈借贷、合伙不分账", "今天不要向客户要承诺、不要催单、不要谈价格底线"], "hours": ["申时 15:00–17:00", "酉时 17:00–19:00"], "talk": "「X总，我这边再核一遍参数，10月11日（周日）给您准信。」（只接话、不推进；今天把话收住就是赢）", "tag": "内务", "cls": "比", "cap": ""}, {"d": 5, "w": "一", "gel": "水", "zel": "水", "ss": "表达", "zss": "表达", "jc": "平常", "sslist": [], "score": -3.9, "why": "水水相叠·话多易失", "tier": "B", "angle": "表达日 · 靠方案取胜", "yi": ["讲方案、做演示、答技术问——靠专业度得分", "把十年经验写成 SOP/案例库：一次做，多次卖", "适合\"讲课型\"拜访，不适合\"逼单型\"拜访", "平常日：平常心，宜常规维护，不宜大动作"], "ji": ["忌逼单、忌催单、忌当场要承诺——话太满容易过头", "今天不要向客户要承诺、不要催单、不要谈价格底线"], "hours": ["辰时 07:00–09:00", "申时 15:00–17:00"], "talk": "「X总，我这边再核一遍参数，10月11日（周日）给您准信。」（只接话、不推进；今天把话收住就是赢）", "tag": "内务", "cls": "食", "cap": ""}, {"d": 6, "w": "二", "gel": "水", "zel": "土", "ss": "表达", "zss": "背书", "jc": "定盘", "sslist": ["贵人", "独处"], "score": 2.0, "why": "土克水·能把节奏压住，但内耗仍在", "tier": "B", "angle": "表达日 · 靠方案取胜", "yi": ["讲方案、做演示、答技术问——靠专业度得分", "把十年经验写成 SOP/案例库：一次做，多次卖", "适合\"讲课型\"拜访，不适合\"逼单型\"拜访", "定盘日：定框架、定口径、定人选，宜定不宜变", "贵人日：开口求人最容易成，适合请领导/前辈出面引荐", "独处日：宜独处打磨方案、写材料，少社交多沉淀"], "ji": ["忌逼单、忌催单、忌当场要承诺——话太满容易过头", "今天不要向客户要承诺、不要催单、不要谈价格底线"], "hours": ["辰时 07:00–09:00", "申时 15:00–17:00"], "talk": "「X总，我这边再核一遍参数，10月11日（周日）给您准信。」（只接话、不推进；今天把话收住就是赢）", "tag": "内务", "cls": "食", "cap": ""}, {"d": 7, "w": "三", "gel": "木", "zel": "木", "ss": "目标", "zss": "目标", "jc": "坚持", "sslist": [], "score": -3.2, "why": "木木相叠·目标过多，追单反被单拖", "tier": "B", "angle": "目标日 · 谈钱不动气", "yi": ["谈价格、谈条款、谈付款方式（只谈，不逼）", "催应收账款、跟回款——命里功课，但节奏自己掌握", "目标客户分层盘点：把 20% 做成 80%", "坚持日：宜守成、宜坚持既定方案，不宜另起炉灶", "今日节奏重复·老问题重提，宜守不宜攻"], "ji": ["目标与精力拉扯：目标日要承诺，十有八九谈崩", "今天不要向客户要承诺、不要催单、不要谈价格底线", "节奏重复：旧事重提，别翻旧账、别做重大让步"], "hours": ["辰时 07:00–09:00", "未时 13:00–15:00"], "talk": "「X总，我这边再核一遍参数，10月11日（周日）给您准信。」（只接话、不推进；今天把话收住就是赢）", "tag": "内务", "cls": "财", "cap": ""}, {"d": 8, "w": "四", "gel": "木", "zel": "木", "ss": "目标", "zss": "目标", "jc": "坚持", "sslist": ["人缘"], "score": -3.7, "why": "木木相叠·目标过多，追单反被单拖", "tier": "B", "angle": "目标日 · 谈钱不动气", "yi": ["谈价格、谈条款、谈付款方式（只谈，不逼）", "催应收账款、跟回款——命里功课，但节奏自己掌握", "目标客户分层盘点：把 20% 做成 80%", "坚持日：宜守成、宜坚持既定方案，不宜另起炉灶", "人缘日：人际缘好，宜应酬维护，但别把正事谈成闲事", "今日节奏相冲·主变动反复，不宜要承诺"], "ji": ["目标与精力拉扯：目标日要承诺，十有八九谈崩", "今天不要向客户要承诺、不要催单、不要谈价格底线", "节奏相冲：变动反复，重要约定务必落文字"], "hours": ["辰时 07:00–09:00", "未时 13:00–15:00"], "talk": "「X总，我这边再核一遍参数，10月11日（周日）给您准信。」（只接话、不推进；今天把话收住就是赢）", "tag": "内务", "cls": "财", "cap": ""}, {"d": 9, "w": "五", "gel": "火", "zel": "土", "ss": "名分", "zss": "背书", "jc": "避让", "sslist": [], "score": 0.3, "why": "火生土·名分借平台落地", "tier": "B", "angle": "名分日 · 借舞台", "yi": ["约决策人、约大领导：单刀直入谈框架，别绕", "要 title、要名分、要授权，趁火日把身份定下来", "公开述职、上台汇报——把\"被看见\"当工作方法", "避让日：本月冲煞之日，只宜处理旧事，不宜立新、不宜决断", "今日相冲叠加·只宜处理旧事，不宜立新"], "ji": ["没有平台背书就别上桌，裸高压最伤人", "今天不要向客户要承诺、不要催单、不要谈价格底线", "避让日：不签任何文件、不做任何承诺、不打任何款"], "hours": ["未时 13:00–15:00", "申时 15:00–17:00"], "talk": "「X总，我这边再核一遍参数，10月11日（周日）给您准信。」（只接话、不推进；今天把话收住就是赢）", "tag": "内务", "cls": "官", "cap": "避让日（辰与戌相冲）· 封顶守日，只宜处理旧事"}, {"d": 10, "w": "六", "gel": "火", "zel": "火", "ss": "名分", "zss": "名分", "jc": "谨慎", "sslist": [], "score": 2.4, "why": "", "tier": "B", "angle": "名分日 · 借舞台", "yi": ["约决策人、约大领导：单刀直入谈框架，别绕", "要 title、要名分、要授权，趁火日把身份定下来", "公开述职、上台汇报——把\"被看见\"当工作方法", "谨慎日：宜谨慎收尾，话别说满，价别让尽", "今日有暗助·暗中有人托举，适合请人帮忙"], "ji": ["没有平台背书就别上桌，裸高压最伤人", "今天不要向客户要承诺、不要催单、不要谈价格底线"], "hours": ["未时 13:00–15:00", "申时 15:00–17:00"], "talk": "「X总，我这边再核一遍参数，10月11日（周日）给您准信。」（只接话、不推进；今天把话收住就是赢）", "tag": "内务", "cls": "官", "cap": ""}, {"d": 11, "w": "日", "gel": "土", "zel": "火", "ss": "背书", "zss": "名分", "jc": "成事", "sslist": ["人缘"], "score": 5.1, "why": "火土相生·稳中有进", "tier": "S", "angle": "平台日 · 借背书", "yi": ["开口先讲平台：资质、案例、头部客户、上市公司主体", "约客户走\"正式流程\"：递方案、报审批、要盖章回执", "向上要资源：找领导站台、要授权价、要技术支持", "成事日：最适合把口头共识落成白纸黑字", "人缘日：人际缘好，宜应酬维护，但别把正事谈成闲事"], "ji": ["别只谈价格和感情——平台日不谈背书，等于白跑"], "hours": ["辰时 07:00–09:00", "未时 13:00–15:00"], "talk": "「X总，方案按您上次的意见改完了。今天把时间点和责任人定下来，我这边就能排产期——您看是10月12日（周一）把流程走了，还是10月13日（周二）？」（二选一，不问“要不要”）", "tag": "签约", "cls": "印", "cap": ""}, {"d": 12, "w": "一", "gel": "土", "zel": "土", "ss": "背书", "zss": "背书", "jc": "收口", "sslist": ["贵人"], "score": 6.8, "why": "土土相叠·最利走流程盖章", "tier": "S", "angle": "平台日 · 借背书", "yi": ["开口先讲平台：资质、案例、头部客户、上市公司主体", "约客户走\"正式流程\"：递方案、报审批、要盖章回执", "向上要资源：找领导站台、要授权价、要技术支持", "收口日：宜收割、宜催收、宜收口，把在途的落袋", "贵人日：开口求人最容易成，适合请领导/前辈出面引荐"], "ji": ["别只谈价格和感情——平台日不谈背书，等于白跑"], "hours": ["辰时 07:00–09:00", "未时 13:00–15:00"], "talk": "「X总，方案按您上次的意见改完了。今天把时间点和责任人定下来，我这边就能排产期——您看是10月13日（周二）把流程走了，还是10月24日（周六）？」（二选一，不问“要不要”）", "tag": "签约", "cls": "印", "cap": ""}, {"d": 13, "w": "二", "gel": "金", "zel": "金", "ss": "同伴", "zss": "同伴", "jc": "开局", "sslist": ["主场", "出行"], "score": 7.5, "why": "金金相叠·气势足，适合组队攻坚", "tier": "S", "angle": "同伴日 · 借圈子", "yi": ["带队友一起见客户：技术+销售双人组，气场翻倍", "找同行/老同事引荐，内推胜过陌生拜访十倍", "把关系当资产盘点：固定节奏联络，不是用时才想起", "开局日：开张、开局、开谈，主动发起最有利", "主场日：你本人出面最有力，亲自谈、亲自签，别假手他人", "出行日：宜出行、宜跑动，坐办公室反而浪费", "今日冲你本月主线·动中得财，宜主动出击，别拖"], "ji": ["别单打独斗；也别和朋友谈借贷、合伙不分账"], "hours": ["申时 15:00–17:00", "酉时 17:00–19:00"], "talk": "「X总，今天的日子正合适，能定就今天定下来。要是您这边还想再想想，咱们就约10月24日（周六）把字签了——这中间我先把材料备齐。」", "tag": "攻坚", "cls": "比", "cap": ""}, {"d": 14, "w": "三", "gel": "金", "zel": "金", "ss": "同伴", "zss": "同伴", "jc": "收尾", "sslist": ["攻坚"], "score": 3.6, "why": "金金相叠·气势足，适合组队攻坚", "tier": "A", "angle": "同伴日 · 借圈子", "yi": ["带队友一起见客户：技术+销售双人组，气场翻倍", "找同行/老同事引荐，内推胜过陌生拜访十倍", "把关系当资产盘点：固定节奏联络，不是用时才想起", "收尾日：宜收口、宜复盘，不宜开新局、不宜签字", "攻坚日：适合啃硬骨头客户，但别把劲儿对着自己人"], "ji": ["别单打独斗；也别和朋友谈借贷、合伙不分账", "不要在今天要签字——火候没到，逼了反而倒退", "收尾日：不开新局、不见新客户，适合内部收口"], "hours": ["申时 15:00–17:00", "酉时 17:00–19:00"], "talk": "「X总，今天不急着定。我把技术方案和两个同行的案例留给您，10月24日（周六）我再来跟您把细节对完。」（要下一步，不要承诺）", "tag": "组队", "cls": "比", "cap": "收尾日·封顶推进日（宜收口、不宜开新局）"}, {"d": 15, "w": "四", "gel": "水", "zel": "土", "ss": "表达", "zss": "背书", "jc": "立事", "sslist": ["独处"], "score": 0.9, "why": "土克水·能把节奏压住，但内耗仍在", "tier": "B", "angle": "表达日 · 靠方案取胜", "yi": ["讲方案、做演示、答技术问——靠专业度得分", "把十年经验写成 SOP/案例库：一次做，多次卖", "适合\"讲课型\"拜访，不适合\"逼单型\"拜访", "立事日：宜立计划、建关系，不宜立刻求结果", "独处日：宜独处打磨方案、写材料，少社交多沉淀"], "ji": ["忌逼单、忌催单、忌当场要承诺——话太满容易过头", "今天不要向客户要承诺、不要催单、不要谈价格底线"], "hours": ["辰时 07:00–09:00", "申时 15:00–17:00"], "talk": "「X总，我这边再核一遍参数，10月24日（周六）给您准信。」（只接话、不推进；今天把话收住就是赢）", "tag": "内务", "cls": "食", "cap": ""}, {"d": 16, "w": "五", "gel": "水", "zel": "水", "ss": "表达", "zss": "表达", "jc": "清旧", "sslist": ["笔头", "出行"], "score": -2.1, "why": "水水相叠·话多易失", "tier": "B", "angle": "表达日 · 靠方案取胜", "yi": ["讲方案、做演示、答技术问——靠专业度得分", "把十年经验写成 SOP/案例库：一次做，多次卖", "适合\"讲课型\"拜访，不适合\"逼单型\"拜访", "清旧日：除旧布新，适合清理旧账、了结旧单再谈新的", "笔头日：宜写标书、做方案、备材料，笔头胜过口头", "出行日：宜出行、宜跑动，坐办公室反而浪费"], "ji": ["忌逼单、忌催单、忌当场要承诺——话太满容易过头", "今天不要向客户要承诺、不要催单、不要谈价格底线"], "hours": ["辰时 07:00–09:00", "申时 15:00–17:00"], "talk": "「X总，我这边再核一遍参数，10月24日（周六）给您准信。」（只接话、不推进；今天把话收住就是赢）", "tag": "内务", "cls": "食", "cap": ""}, {"d": 17, "w": "六", "gel": "木", "zel": "水", "ss": "目标", "zss": "表达", "jc": "守成", "sslist": [], "score": -3.5, "why": "", "tier": "B", "angle": "目标日 · 谈钱不动气", "yi": ["谈价格、谈条款、谈付款方式（只谈，不逼）", "催应收账款、跟回款——命里功课，但节奏自己掌握", "目标客户分层盘点：把 20% 做成 80%", "守成日：宜守不宜进，满则溢，别加码"], "ji": ["目标与精力拉扯：目标日要承诺，十有八九谈崩", "今天不要向客户要承诺、不要催单、不要谈价格底线"], "hours": ["辰时 07:00–09:00", "未时 13:00–15:00"], "talk": "「X总，我这边再核一遍参数，10月24日（周六）给您准信。」（只接话、不推进；今天把话收住就是赢）", "tag": "内务", "cls": "财", "cap": ""}, {"d": 18, "w": "日", "gel": "木", "zel": "土", "ss": "目标", "zss": "背书", "jc": "平常", "sslist": ["贵人", "独处"], "score": 2.0, "why": "木克土·别为了单子丢了体面", "tier": "B", "angle": "目标日 · 谈钱不动气", "yi": ["谈价格、谈条款、谈付款方式（只谈，不逼）", "催应收账款、跟回款——命里功课，但节奏自己掌握", "目标客户分层盘点：把 20% 做成 80%", "平常日：平常心，宜常规维护，不宜大动作", "贵人日：开口求人最容易成，适合请领导/前辈出面引荐", "独处日：宜独处打磨方案、写材料，少社交多沉淀"], "ji": ["目标与精力拉扯：目标日要承诺，十有八九谈崩", "今天不要向客户要承诺、不要催单、不要谈价格底线"], "hours": ["辰时 07:00–09:00", "未时 13:00–15:00"], "talk": "「X总，我这边再核一遍参数，10月24日（周六）给您准信。」（只接话、不推进；今天把话收住就是赢）", "tag": "内务", "cls": "财", "cap": ""}, {"d": 19, "w": "一", "gel": "火", "zel": "木", "ss": "名分", "zss": "目标", "jc": "定盘", "sslist": [], "score": 0.0, "why": "", "tier": "B", "angle": "名分日 · 借舞台", "yi": ["约决策人、约大领导：单刀直入谈框架，别绕", "要 title、要名分、要授权，趁火日把身份定下来", "公开述职、上台汇报——把\"被看见\"当工作方法", "定盘日：定框架、定口径、定人选，宜定不宜变", "今日节奏重复·老问题重提，宜守不宜攻"], "ji": ["没有平台背书就别上桌，裸高压最伤人", "今天不要向客户要承诺、不要催单、不要谈价格底线", "节奏重复：旧事重提，别翻旧账、别做重大让步"], "hours": ["未时 13:00–15:00", "申时 15:00–17:00"], "talk": "「X总，我这边再核一遍参数，10月24日（周六）给您准信。」（只接话、不推进；今天把话收住就是赢）", "tag": "内务", "cls": "官", "cap": ""}, {"d": 20, "w": "二", "gel": "火", "zel": "木", "ss": "名分", "zss": "目标", "jc": "坚持", "sslist": ["人缘"], "score": -1.1, "why": "", "tier": "B", "angle": "名分日 · 借舞台", "yi": ["约决策人、约大领导：单刀直入谈框架，别绕", "要 title、要名分、要授权，趁火日把身份定下来", "公开述职、上台汇报——把\"被看见\"当工作方法", "坚持日：宜守成、宜坚持既定方案，不宜另起炉灶", "人缘日：人际缘好，宜应酬维护，但别把正事谈成闲事", "今日节奏相冲·主变动反复，不宜要承诺"], "ji": ["没有平台背书就别上桌，裸高压最伤人", "今天不要向客户要承诺、不要催单、不要谈价格底线", "节奏相冲：变动反复，重要约定务必落文字"], "hours": ["未时 13:00–15:00", "申时 15:00–17:00"], "talk": "「X总，我这边再核一遍参数，10月24日（周六）给您准信。」（只接话、不推进；今天把话收住就是赢）", "tag": "内务", "cls": "官", "cap": ""}, {"d": 21, "w": "三", "gel": "土", "zel": "土", "ss": "背书", "zss": "背书", "jc": "避让", "sslist": [], "score": 2.4, "why": "土土相叠·最利走流程盖章", "tier": "B", "angle": "平台日 · 借背书", "yi": ["开口先讲平台：资质、案例、头部客户、上市公司主体", "约客户走\"正式流程\"：递方案、报审批、要盖章回执", "向上要资源：找领导站台、要授权价、要技术支持", "避让日：本月冲煞之日，只宜处理旧事，不宜立新、不宜决断", "今日相冲叠加·只宜处理旧事，不宜立新"], "ji": ["别只谈价格和感情——平台日不谈背书，等于白跑", "今天不要向客户要承诺、不要催单、不要谈价格底线", "避让日：不签任何文件、不做任何承诺、不打任何款"], "hours": ["辰时 07:00–09:00", "未时 13:00–15:00"], "talk": "「X总，我这边再核一遍参数，10月24日（周六）给您准信。」（只接话、不推进；今天把话收住就是赢）", "tag": "内务", "cls": "印", "cap": "避让日（辰与戌相冲）· 封顶守日，只宜处理旧事"}, {"d": 22, "w": "四", "gel": "土", "zel": "火", "ss": "背书", "zss": "名分", "jc": "谨慎", "sslist": [], "score": 4.8, "why": "火土相生·稳中有进", "tier": "A", "angle": "平台日 · 借背书", "yi": ["开口先讲平台：资质、案例、头部客户、上市公司主体", "约客户走\"正式流程\"：递方案、报审批、要盖章回执", "向上要资源：找领导站台、要授权价、要技术支持", "谨慎日：宜谨慎收尾，话别说满，价别让尽", "今日有暗助·暗中有人托举，适合请人帮忙"], "ji": ["别只谈价格和感情——平台日不谈背书，等于白跑", "不要在今天要签字——火候没到，逼了反而倒退"], "hours": ["辰时 07:00–09:00", "未时 13:00–15:00"], "talk": "「X总，今天不急着定。我把技术方案和两个同行的案例留给您，10月24日（周六）我再来跟您把细节对完。」（要下一步，不要承诺）", "tag": "流程", "cls": "印", "cap": ""}, {"d": 23, "w": "五", "gel": "金", "zel": "火", "ss": "同伴", "zss": "名分", "jc": "成事", "sslist": ["人缘"], "score": 3.9, "why": "火克金·压力落在自己身上，别单打独斗", "tier": "A", "angle": "同伴日 · 借圈子", "yi": ["带队友一起见客户：技术+销售双人组，气场翻倍", "找同行/老同事引荐，内推胜过陌生拜访十倍", "把关系当资产盘点：固定节奏联络，不是用时才想起", "成事日：最适合把口头共识落成白纸黑字", "人缘日：人际缘好，宜应酬维护，但别把正事谈成闲事"], "ji": ["别单打独斗；也别和朋友谈借贷、合伙不分账", "不要在今天要签字——火候没到，逼了反而倒退"], "hours": ["申时 15:00–17:00", "酉时 17:00–19:00"], "talk": "「X总，今天不急着定。我把技术方案和两个同行的案例留给您，10月24日（周六）我再来跟您把细节对完。」（要下一步，不要承诺）", "tag": "组队", "cls": "比", "cap": ""}, {"d": 24, "w": "六", "gel": "金", "zel": "土", "ss": "同伴", "zss": "背书", "jc": "收口", "sslist": ["贵人"], "score": 5.8, "why": "土生金·有背书撑腰，说话有底气", "tier": "S", "angle": "同伴日 · 借圈子", "yi": ["带队友一起见客户：技术+销售双人组，气场翻倍", "找同行/老同事引荐，内推胜过陌生拜访十倍", "把关系当资产盘点：固定节奏联络，不是用时才想起", "收口日：宜收割、宜催收、宜收口，把在途的落袋", "贵人日：开口求人最容易成，适合请领导/前辈出面引荐"], "ji": ["别单打独斗；也别和朋友谈借贷、合伙不分账"], "hours": ["申时 15:00–17:00", "酉时 17:00–19:00"], "talk": "「X总，今天是本月最后一个决断日，能定就今天定死。定不了也别在月底硬耗——咱们约下月上旬，我提前把材料送过去。」", "tag": "攻坚", "cls": "比", "cap": ""}, {"d": 25, "w": "日", "gel": "水", "zel": "金", "ss": "表达", "zss": "同伴", "jc": "开局", "sslist": ["主场", "出行"], "score": 2.8, "why": "金生水·力气往外流，宜收不宜放", "tier": "B", "angle": "表达日 · 靠方案取胜", "yi": ["讲方案、做演示、答技术问——靠专业度得分", "把十年经验写成 SOP/案例库：一次做，多次卖", "适合\"讲课型\"拜访，不适合\"逼单型\"拜访", "开局日：开张、开局、开谈，主动发起最有利", "主场日：你本人出面最有力，亲自谈、亲自签，别假手他人", "出行日：宜出行、宜跑动，坐办公室反而浪费", "今日冲你本月主线·动中得财，宜主动出击，别拖"], "ji": ["忌逼单、忌催单、忌当场要承诺——话太满容易过头", "今天不要向客户要承诺、不要催单、不要谈价格底线"], "hours": ["辰时 07:00–09:00", "申时 15:00–17:00"], "talk": "「X总，我这边再核一遍参数，下月上旬给您准信。」（只接话、不推进；今天把话收住就是赢）", "tag": "内务", "cls": "食", "cap": ""}, {"d": 26, "w": "一", "gel": "水", "zel": "金", "ss": "表达", "zss": "同伴", "jc": "收尾", "sslist": ["攻坚"], "score": -0.9, "why": "金生水·力气往外流，宜收不宜放", "tier": "B", "angle": "表达日 · 靠方案取胜", "yi": ["讲方案、做演示、答技术问——靠专业度得分", "把十年经验写成 SOP/案例库：一次做，多次卖", "适合\"讲课型\"拜访，不适合\"逼单型\"拜访", "收尾日：宜收口、宜复盘，不宜开新局、不宜签字", "攻坚日：适合啃硬骨头客户，但别把劲儿对着自己人"], "ji": ["忌逼单、忌催单、忌当场要承诺——话太满容易过头", "今天不要向客户要承诺、不要催单、不要谈价格底线", "收尾日：不开新局、不见新客户，适合内部收口"], "hours": ["辰时 07:00–09:00", "申时 15:00–17:00"], "talk": "「X总，我这边再核一遍参数，下月上旬给您准信。」（只接话、不推进；今天把话收住就是赢）", "tag": "内务", "cls": "食", "cap": "收尾日·封顶推进日（宜收口、不宜开新局）"}, {"d": 27, "w": "二", "gel": "木", "zel": "土", "ss": "目标", "zss": "背书", "jc": "立事", "sslist": ["独处"], "score": 1.2, "why": "木克土·别为了单子丢了体面", "tier": "B", "angle": "目标日 · 谈钱不动气", "yi": ["谈价格、谈条款、谈付款方式（只谈，不逼）", "催应收账款、跟回款——命里功课，但节奏自己掌握", "目标客户分层盘点：把 20% 做成 80%", "立事日：宜立计划、建关系，不宜立刻求结果", "独处日：宜独处打磨方案、写材料，少社交多沉淀"], "ji": ["目标与精力拉扯：目标日要承诺，十有八九谈崩", "今天不要向客户要承诺、不要催单、不要谈价格底线"], "hours": ["辰时 07:00–09:00", "未时 13:00–15:00"], "talk": "「X总，我这边再核一遍参数，下月上旬给您准信。」（只接话、不推进；今天把话收住就是赢）", "tag": "内务", "cls": "财", "cap": ""}, {"d": 28, "w": "三", "gel": "木", "zel": "水", "ss": "目标", "zss": "表达", "jc": "清旧", "sslist": ["笔头", "出行"], "score": -0.9, "why": "", "tier": "B", "angle": "目标日 · 谈钱不动气", "yi": ["谈价格、谈条款、谈付款方式（只谈，不逼）", "催应收账款、跟回款——命里功课，但节奏自己掌握", "目标客户分层盘点：把 20% 做成 80%", "清旧日：除旧布新，适合清理旧账、了结旧单再谈新的", "笔头日：宜写标书、做方案、备材料，笔头胜过口头", "出行日：宜出行、宜跑动，坐办公室反而浪费"], "ji": ["目标与精力拉扯：目标日要承诺，十有八九谈崩", "今天不要向客户要承诺、不要催单、不要谈价格底线"], "hours": ["辰时 07:00–09:00", "未时 13:00–15:00"], "talk": "「X总，我这边再核一遍参数，下月上旬给您准信。」（只接话、不推进；今天把话收住就是赢）", "tag": "内务", "cls": "财", "cap": ""}, {"d": 29, "w": "四", "gel": "火", "zel": "水", "ss": "名分", "zss": "表达", "jc": "守成", "sslist": [], "score": -1.0, "why": "", "tier": "B", "angle": "名分日 · 借舞台", "yi": ["约决策人、约大领导：单刀直入谈框架，别绕", "要 title、要名分、要授权，趁火日把身份定下来", "公开述职、上台汇报——把\"被看见\"当工作方法", "守成日：宜守不宜进，满则溢，别加码"], "ji": ["没有平台背书就别上桌，裸高压最伤人", "今天不要向客户要承诺、不要催单、不要谈价格底线"], "hours": ["未时 13:00–15:00", "申时 15:00–17:00"], "talk": "「X总，我这边再核一遍参数，下月上旬给您准信。」（只接话、不推进；今天把话收住就是赢）", "tag": "内务", "cls": "官", "cap": ""}, {"d": 30, "w": "五", "gel": "火", "zel": "土", "ss": "名分", "zss": "背书", "jc": "平常", "sslist": ["贵人", "独处"], "score": 4.4, "why": "火生土·名分借平台落地", "tier": "A", "angle": "名分日 · 借舞台", "yi": ["约决策人、约大领导：单刀直入谈框架，别绕", "要 title、要名分、要授权，趁火日把身份定下来", "公开述职、上台汇报——把\"被看见\"当工作方法", "平常日：平常心，宜常规维护，不宜大动作", "贵人日：开口求人最容易成，适合请领导/前辈出面引荐", "独处日：宜独处打磨方案、写材料，少社交多沉淀"], "ji": ["没有平台背书就别上桌，裸高压最伤人", "不要在今天要签字——火候没到，逼了反而倒退"], "hours": ["未时 13:00–15:00", "申时 15:00–17:00"], "talk": "「X总，今天不急着定。我把技术方案和两个同行的案例留给您，下月上旬我再来跟您把细节对完。」（要下一步，不要承诺）", "tag": "见人", "cls": "官", "cap": ""}, {"d": 31, "w": "六", "gel": "土", "zel": "木", "ss": "背书", "zss": "目标", "jc": "定盘", "sslist": [], "score": 2.0, "why": "", "tier": "B", "angle": "平台日 · 借背书", "yi": ["开口先讲平台：资质、案例、头部客户、上市公司主体", "约客户走\"正式流程\"：递方案、报审批、要盖章回执", "向上要资源：找领导站台、要授权价、要技术支持", "定盘日：定框架、定口径、定人选，宜定不宜变", "今日节奏重复·老问题重提，宜守不宜攻"], "ji": ["别只谈价格和感情——平台日不谈背书，等于白跑", "今天不要向客户要承诺、不要催单、不要谈价格底线", "节奏重复：旧事重提，别翻旧账、别做重大让步"], "hours": ["辰时 07:00–09:00", "未时 13:00–15:00"], "talk": "「X总，我这边再核一遍参数，下月上旬给您准信。」（只接话、不推进；今天把话收住就是赢）", "tag": "内务", "cls": "印", "cap": ""}];
+const WINS = [{"t": "🥇 第一窗口：10月11–13日（成事日 → 收口日 → 开局日）", "b": "成事日 → 收口日 → 开局日。金金相叠·气势足，适合组队攻坚。其中 13日（开局日） 分最高（节拍分 7.5，主场　出行），是这组里最该押注的一天。", "d": "打法：11日定框架 → 中间几天走流程、备料、盖章 → 13日当面要签字。"}, {"t": "🥈 第二窗口：10月2–3日（立事日 → 清旧日）", "b": "立事日 → 清旧日。土生金·平台与同伴同旺。其中 2日（立事日） 分最高（节拍分 6.4，攻坚），是这组里最该押注的一天。", "d": "打法：2日谈定框架与口径 → 3日走流程、盖章收口。"}, {"t": "🥉 第三窗口：10月24日（收口日）", "b": "收口日。土生金·有背书撑腰，说话有底气。其中 24日（收口日） 分最高（节拍分 5.8，贵人），是这组里最该押注的一天。", "d": "打法：24日当天把「攻坚」这件事办完，别拖到第二天。"}];
+const REST = "";
+const LBL = {"kv_el": "属性", "kv_talk": "主题", "kv_jc": "日型", "kv_ss": "助力", "kv_hours": "最佳时段", "kv_score": "节拍分", "score_hint": "（顺节奏为正，逆节奏为负）", "col_gz": "日序", "col_ss": "主题", "col_jc": "日型"};
+const META = {
+  S:{label:'决断日',star:'★★★'},
+  A:{label:'推进日',star:'★★'},
+  B:{label:'守日',star:'★'}
+};
+const WEEK = ['日','一','二','三','四','五','六'];
+const first = 4;
+let lastFocus = null;
+
+function cells(){
+  const grid = document.getElementById('grid');
+  let h = '';
+  for(let i=0;i<first;i++) h += '<div class="cell blank"></div>';
+  CAL.forEach(d=>{
+    h += `<button class="cell t${d.tier}" data-d="${d.d}" type="button"
+      aria-label="${d.d}日 ${d.gz||d.jc+'日'} ${META[d.tier].label}，点击查看建议">
+      <span class="dn">${d.d}</span>
+      ${d.gz?`<span class="dgz">${d.gz}</span>`:''}
+      <span class="djc">${d.jc}日</span>
+      <span class="dtag">${d.tag}</span>
+    </button>`;
+  });
+  grid.innerHTML = h;
+  grid.querySelectorAll('.cell[data-d]').forEach(b=>{
+    b.addEventListener('click', ()=>open(+b.dataset.d, b));
+  });
+  markToday();
+}
+
+function markToday(){
+  const t = new Date();
+  if(t.getFullYear()!==2026 || t.getMonth()+1!==10) return;
+  const c = document.querySelector(`.cell[data-d="${t.getDate()}"]`);
+  if(c) c.classList.add('today');
+}
+
+function li(a){ return a.map(x=>`<li>${x}</li>`).join(''); }
+
+function open(day, src){
+  const d = CAL.find(x=>x.d===day);
+  if(!d) return;
+  lastFocus = src || null;
+  const bodies = {
+    S:'今天可以要承诺。',
+    A:'今天只推进，不逼单。',
+    B:'今天别谈单，做内务。'
+  };
+  document.getElementById('mbody').innerHTML = `
+    <h3>${10}月${d.d}日 · 星期${d.w}</h3>
+    <div class="gzline">${d.gz?d.gz+'日 · ':''}${d.ss}/${d.zss} · ${d.jc}日${d.yc?' · '+d.yc+'月':''}</div>
+    <div class="tierbar t${d.tier}">${META[d.tier].star} ${META[d.tier].label} —— ${bodies[d.tier]}</div>
+    <div class="kv">
+      <div class="k">${LBL.kv_el}</div><div>${d.gel}+${d.zel}${d.why?' · '+d.why:''}</div>
+      <div class="k">${LBL.kv_talk}</div><div>${d.angle}</div>
+      <div class="k">${LBL.kv_jc}</div><div>${d.jc}日${d.cap?' · '+d.cap:''}</div>
+      <div class="k">${LBL.kv_ss}</div><div>${d.sslist.length?d.sslist.join(' · '):'—'}</div>
+      <div class="k">${LBL.kv_hours}</div><div>${d.hours.join('　/　')}</div>
+      <div class="k">${LBL.kv_score}</div><div>${d.score} 分${LBL.score_hint}</div>
+    </div>
+    <div class="sec"><div class="h">宜</div><ul>${li(d.yi)}</ul></div>
+    <div class="sec ji"><div class="h">忌</div><ul>${li(d.ji)}</ul></div>
+    <div class="sec"><div class="h">今日话术</div><div class="talk">${d.talk}</div></div>
+  `;
+  const m = document.getElementById('modal');
+  m.classList.add('show');
+  document.body.style.overflow='hidden';
+  m.querySelector('.x').focus();
+}
+
+function close(){
+  const m = document.getElementById('modal');
+  m.classList.remove('show');
+  document.body.style.overflow='';
+  if(lastFocus && lastFocus.focus) lastFocus.focus();
+}
+
+function renderSummary(){
+  const el = document.getElementById('keyWins');
+  if(!el) return;
+  el.innerHTML = WINS.map(w=>`<div class="win"><div class="t">${w.t}</div>
+    <div class="b">${w.b}</div><div class="d">${w.d}</div></div>`).join('')
+    || '<div class="mid">本月无成组决断日，按单日择吉使用。</div>';
+  if(REST){
+    el.innerHTML += `<div class="mid" style="margin-top:8px;color:var(--dim);font-size:12.5px">${REST}</div>`;
+  }
+  const grp = a => {
+    if(!a.length) return '无';
+    const out=[]; let s=a[0], p=a[0];
+    for(let i=1;i<a.length;i++){
+      if(a[i]===p+1){p=a[i];continue;}
+      out.push(s===p?`${s}`:`${s}–${p}`); s=p=a[i];
+    }
+    out.push(s===p?`${s}`:`${s}–${p}`);
+    return out.join('、');
+  };
+  const S = CAL.filter(d=>d.tier==='S').map(d=>d.d);
+  const A = CAL.filter(d=>d.tier==='A').map(d=>d.d);
+  const sum = document.getElementById('rangeLine');
+  if(sum) sum.textContent = `决断日：${grp(S)}　·　推进日：${grp(A)}`;
+}
+
+function init(){
+  cells(); renderSummary();
+  document.querySelector('.sheet .x').addEventListener('click', close);
+  document.getElementById('modal').addEventListener('click', e=>{
+    if(e.target.id==='modal') close();
+  });
+  document.addEventListener('keydown', e=>{ if(e.key==='Escape') close(); });
+  const fab = document.getElementById('fab');
+  if(fab) fab.addEventListener('click', ()=>window.print());
+}
+if(typeof document!=='undefined' && document.getElementById('grid')) init();
+if(typeof window!=='undefined'){
+  window.__cal = {CAL, META, open, close, cells, renderSummary,
+                  todayTier: ()=>{const t=new Date();
+                    const x=CAL.find(d=>d.d===t.getDate()); return x?x.tier:null;}};
+}
+</script>
+</body>
+</html>
